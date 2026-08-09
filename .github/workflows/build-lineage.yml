@@ -54,7 +54,6 @@ jobs:
           mkdir -p .repo/local_manifests
           cat > .repo/local_manifests/roomservice.xml <<'EOF'
           <manifest>
-            <remote name="github" fetch="https://github.com/" />
             <project path="device/oppo/findx3" name="rockinJ/android_device_oppo_findx3" remote="github" revision="lineage-23.0" />
             <project path="kernel/oppo/sm8250" name="oppo-source/android_kernel_oppo_sm8250" remote="github" revision="oppo/sm8250_u_14.0.0_oppo_find_x3" />
             <project path="hardware/oplus" name="LineageOS/android_hardware_oplus" remote="github" revision="lineage-23.0" />
