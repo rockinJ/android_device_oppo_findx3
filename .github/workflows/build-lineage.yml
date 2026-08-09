@@ -1,0 +1,92 @@
+name: Build LineageOS 23 for Find X3
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [lineage-23.0]
+    paths: ['.github/workflows/build-lineage.yml']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 480
+    steps:
+      - name: Checkout device tree
+        uses: actions/checkout@v4
+        with:
+          path: device_tree
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc
+          sudo apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php* 2>/dev/null || true
+          sudo apt-get -y autoremove --purge 2>/dev/null || true
+          sudo apt-get clean 2>/dev/null || true
+          df -h / | tail -1
+
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install git-core gnupg flex bison build-essential zip curl zlib1g-dev \
+            gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses-dev x11proto-core-dev \
+            libx11-dev lib32z1-dev libgl1-mesa-dev libxml2-utils xsltproc unzip fontconfig \
+            python3 python3-pip python-is-python3 bc bison ccache liblz4-tool libncurses5-dev \
+            libsdl1.2-dev libssl-dev libwxgtk3.0-dev lzop pngcrush schedtool squashfs-tools \
+            imagemagick libbz2-dev lzma ncftp bash-completion lib32readline-dev \
+            libncurses-dev libxml2 wget jq tree
+          mkdir -p ~/bin
+          curl -sL https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+          chmod a+x ~/bin/repo
+          echo "$HOME/bin" >> $GITHUB_PATH
+
+      - name: Download vendor blobs
+        run: |
+          curl -sL -o blobs.tar.gz "https://github.com/rockinJ/android_device_oppo_findx3/releases/download/blobs-14.0.0.2301/blobs.tar.gz"
+          mkdir -p blobs
+          tar xzf blobs.tar.gz -C blobs
+          ls blobs/
+
+      - name: Init repo
+        run: |
+          mkdir -p android
+          cd android
+          repo init -u https://github.com/LineageOS/android.git -b lineage-23.0 --git-lfs --depth=1 2>&1 | tail -3
+          mkdir -p .repo/local_manifests
+          cat > .repo/local_manifests/roomservice.xml <<'EOF'
+          <manifest>
+            <remote name="github" fetch="https://github.com/" />
+            <project path="device/oppo/findx3" name="rockinJ/android_device_oppo_findx3" remote="github" revision="lineage-23.0" />
+            <project path="kernel/oppo/sm8250" name="oppo-source/android_kernel_oppo_sm8250" remote="github" revision="oppo/sm8250_u_14.0.0_oppo_find_x3" />
+            <project path="hardware/oplus" name="LineageOS/android_hardware_oplus" remote="github" revision="lineage-23.0" />
+          </manifest>
+          EOF
+
+      - name: Sync sources
+        run: |
+          cd android
+          repo sync -j$(nproc --all) --force-sync --no-clone-bundle 2>&1 | tail -5
+
+      - name: Extract vendor blobs
+        run: |
+          cd android
+          export PYTHONPATH="$PWD/tools/extract-utils"
+          cd device/oppo/findx3
+          python3 extract-files.py ../../../../blobs 2>&1 | tail -20
+          ls ../../../../vendor/oppo/findx3/ 2>/dev/null || echo "WARN: vendor dir missing"
+
+      - name: Build
+        run: |
+          cd android
+          source build/envsetup.sh
+          lunch lineage_findx3-userdebug
+          mka bacon -j$(nproc --all) 2>&1 | tail -40
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lineage-23-findx3
+          path: |
+            android/out/target/product/findx3/*.zip
+            android/out/target/product/findx3/*.img
+          retention-days: 14
