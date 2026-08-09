@@ -137,7 +137,7 @@ odm/lib64/libarcsoft_dualcam_bokeh_api.so|bfdca4001321d1da972a5d8203b7f2aab6bbeb
 odm/lib64/libarcsoft_dualcam_refocus_left.so|af5108ddfcb055ea6d55a03831a39f5001ab287e
 odm/lib64/libarcsoft_dualcam_refocus_preview.so|41c885f87cecd952b4fa5eb7459c3dc5f832b893
 odm/lib64/libarcsoft_dualcam_refocus_uw.so|ac685bfd05d0fd656a17df96c083086e91425802
-odm/lib64/libarc.ion.so|66db5600d6ac48ac5abb7ed7aecdcf3fee92dbc2
+# odm/lib64/libarc.ion.so (not present in 14.0.0.2301)|66db5600d6ac48ac5abb7ed7aecdcf3fee92dbc2
 
 # Camera (All)
 odm/bin/vl53l1_daemon_main
@@ -721,7 +721,7 @@ odm/lib64/libarcsoft_pic_best.so
 odm/lib64/libarcsoft_portraitSN_hvx_stub.so
 odm/lib64/libarcsoft_portrait_super_night_raw.so
 odm/lib64/libarcsoft_preview_antibanding.so
-odm/lib64/libarcsoft_qnnhtp.so
+# odm/lib64/libarcsoft_qnnhtp.so (not present in 14.0.0.2301)
 odm/lib64/libarcsoft_scbokeh_video.so
 odm/lib64/libarcsoft_smart_denoise.so
 odm/lib64/libarcsoft_smart_denoise_v4.so
@@ -1415,7 +1415,7 @@ vendor/lib/libqcodec2_v4l2codec.so
 vendor/lib64/libmmosal.so;MODULE_SUFFIX=_vendor
 
 # Media (Codec2) 
-vendor/etc/init/vendor.qti.media.c2@1.0-service.rc
+# vendor/etc/init/vendor.qti.media.c2@1.0-service.rc (not present in 14.0.0.2301)
 odm/etc/vintf/manifest/c2_manifest_vendor.xml:vendor/etc/vintf/manifest/c2_manifest_vendor.xml
 
 # Native public libraries
@@ -1483,8 +1483,8 @@ vendor/lib64/libqti-perfd.so
 vendor/lib64/libqti-util.so
 
 # Power-off alarm (system) - from IN2025 13.1.0.590(EX01)
-product/app/PowerOffAlarm/PowerOffAlarm.apk
-system_ext/framework/vendor.qti.hardware.alarm-V1.0-java.jar
+# product/app/PowerOffAlarm/PowerOffAlarm.apk (not present in 14.0.0.2301)
+# system_ext/framework/vendor.qti.hardware.alarm-V1.0-java.jar (not present in 14.0.0.2301)
 
 # Power-off alarm (vendor)
 vendor/bin/hw/vendor.qti.hardware.alarm@1.0-service
