@@ -57,6 +57,50 @@ jobs:
             <project path="device/oppo/findx3" name="rockinJ/android_device_oppo_findx3" remote="github" revision="lineage-23.0" />
             <project path="kernel/oppo/sm8250" name="oppo-source/android_kernel_oppo_sm8250" remote="github" revision="oppo/sm8250_u_14.0.0_oppo_find_x3" />
             <project path="hardware/oplus" name="LineageOS/android_hardware_oplus" remote="github" revision="lineage-23.0" />
+            <!-- Trim: emulator/car devices, other-vendor hardware, docs (disk space) -->
+            <remove-project name="device/generic/arm64" />
+            <remove-project name="device/generic/armv7-a-neon" />
+            <remove-project name="device/generic/art" />
+            <remove-project name="device/generic/car" />
+            <remove-project name="LineageOS/android_device_generic_common" />
+            <remove-project name="LineageOS/android_device_generic_goldfish" />
+            <remove-project name="device/generic/goldfish-opengl" />
+            <remove-project name="device/generic/trusty" />
+            <remove-project name="device/generic/x86" />
+            <remove-project name="device/generic/x86_64" />
+            <remove-project name="device/google_car" />
+            <remove-project name="LineageOS/android_device_google_atv" />
+            <remove-project name="LineageOS/android_device_google_contexthub" />
+            <remove-project name="device/google/cuttlefish" />
+            <remove-project name="device/google/cuttlefish_prebuilts" />
+            <remove-project name="device/google/cuttlefish_vmm" />
+            <remove-project name="device/google/trout" />
+            <remove-project name="device/sample" />
+            <remove-project name="LineageOS/android_hardware_broadcom_libbt" />
+            <remove-project name="platform/hardware/broadcom/wlan" />
+            <remove-project name="platform/hardware/nxp/keymint" />
+            <remove-project name="LineageOS/android_hardware_nxp_nfc" />
+            <remove-project name="platform/hardware/nxp/secure_element" />
+            <remove-project name="platform/hardware/nxp/uwb" />
+            <remove-project name="platform/hardware/nxp/weaver" />
+            <remove-project name="LineageOS/android_hardware_samsung_nfc" />
+            <remove-project name="LineageOS/android_hardware_st_nfc" />
+            <remove-project name="platform/hardware/st/secure_element" />
+            <remove-project name="platform/hardware/st/secure_element2" />
+            <remove-project name="platform/hardware/synaptics/wlan" />
+            <remove-project name="platform/hardware/ti/am57x" />
+            <remove-project name="kernel/tests" />
+            <remove-project name="LineageOS/android_vendor_crowdin" />
+            <remove-project name="LineageOS/android_hardware_knowles_athletico_sound_trigger_hal" />
+            <remove-project name="LineageOS/android_vendor_codeaurora_telephony" />
+            <remove-project name="LineageOS/charter" />
+            <remove-project name="LineageOS/cm_crowdin" />
+            <remove-project name="LineageOS/hudson" />
+            <remove-project name="LineageOS/mirror" />
+            <remove-project name="LineageOS/www" />
+            <remove-project name="LineageOS/lineage_wiki" />
+            <remove-project name="LineageOS/contributors-cloud-generator" />
+            <remove-project name="LineageOS/scripts" />
           </manifest>
           EOF
 
@@ -64,6 +108,13 @@ jobs:
         run: |
           cd android
           repo sync -j$(nproc --all) --force-sync --no-clone-bundle 2>&1 | tail -5
+          df -h / | tail -1
+
+      - name: Trim .repo (free disk space for build)
+        run: |
+          cd android
+          rm -rf .repo
+          df -h / | tail -1
 
       - name: Extract vendor blobs
         run: |
